@@ -1,9 +1,13 @@
-import time, threading
-## Basic stoppable thread wrapper
-#
-#  Adds Event for stopping the execution loop
-#  and exiting cleanly.
+import time
+import threading
+
+
 class StoppableThread(threading.Thread):
+    """
+    Basic stoppable thread wrapper
+
+    Adds Event for stopping the execution loop and exiting cleanly.
+    """
     def __init__(self):
         threading.Thread.__init__(self)
         self.stop_event = threading.Event()
@@ -21,12 +25,14 @@ class StoppableThread(threading.Thread):
             # block calling thread until thread really has terminated
             self.join()
 
-## Basic thread wrapper class for asyncronously running functions
-#
-#  Basic thread wrapper class for running functions
-#  asyncronously. Return False from your function
-#  to abort looping.
 class AsyncWorker(StoppableThread):
+    """
+    Basic thread wrapper class for asyncronously running functions
+
+    Basic thread wrapper class for running functions
+    asyncronously. Return False from your function
+    to abort looping.
+    """
     def __init__(self, todo):
         StoppableThread.__init__(self)
         self.todo = todo
@@ -36,7 +42,6 @@ class AsyncWorker(StoppableThread):
             if self.todo() == False:
                 self.stop_event.set()
                 break
-
 
 
 ## Collection, represents a collection of pins

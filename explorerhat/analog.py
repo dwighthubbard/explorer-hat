@@ -7,6 +7,7 @@ try:
 except ImportError:
     exit("This library requires python-smbus\nInstall with: sudo apt-get install python-smbus")
 
+
 def i2c_bus_id():
     revision = ([l[12:-1] for l in open('/proc/cpuinfo','r').readlines() if l[:8]=="Revision"]+['0000'])[0]
     return 1 if int(revision, 16) >= 4 else 0
@@ -27,6 +28,7 @@ PGA_2_048V = 2048
 PGA_1_024V = 1024
 PGA_0_512V = 512
 PGA_0_256V = 256
+
 
 def read_se_adc(channel=1, programmable_gain=PGA_6_144V, samples_per_second=1600):
 	# sane defaults

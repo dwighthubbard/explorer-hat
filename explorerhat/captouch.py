@@ -10,7 +10,13 @@ try:
 except ImportError:
     exit("This library requires python-smbus\nInstall with: sudo apt-get install python-smbus")
 
-import time, signal, atexit, sys, threading
+
+import atexit
+import signal
+import sys
+import threading
+import time
+
 
 # DEVICE MAP
 DEFAULT_ADDR = 0x28

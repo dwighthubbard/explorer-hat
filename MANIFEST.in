@@ -1,0 +1,15 @@
+include explorerhat
+
+
+include setup.py
+include explorerhat/package_metadata.json
+
+# README file
+include README.rst
+include README.md
+include README.txt
+
+# Package Metadata
+include serviceping/package_metadata.json
+
+recursive-include examples *

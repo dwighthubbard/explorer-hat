@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 
 '''Explorer HAT Introduction'''
+import atexit
+import colorama
+import sys
+import time
 
-import time, sys, colorama, atexit
+
 explorerhat = None
 
 DEFAULT_PAUSE = 0.5
@@ -10,10 +14,13 @@ DEFAULT_DELAY = 0.02
 
 name = ''
 
+
 def exit_handler():
     print(colorama.Fore.RESET + colorama.Back.RESET)
 
+
 atexit.register(exit_handler)
+
 
 try:
     from msvcrt import getch
@@ -28,7 +35,8 @@ except ImportError:
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
- 
+
+
 char = None
 
 
