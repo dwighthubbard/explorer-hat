@@ -5,12 +5,16 @@
 API library for Explorer HAT and Explorer HAT Pro, Raspberry Pi add-on boards"""
 
 import atexit
+import logging
 import signal
 import time
 import RPi.GPIO as GPIO
 
 from . import captouch
 from .pins import ObjectCollection, AsyncWorker, StoppableThread
+
+
+logger = logging.getLogger(__name__)
 
 
 explorer_pro = False
@@ -653,9 +657,9 @@ def is_explorer_pro():
 
 # Exit cleanly
 def explorerhat_exit():
-    print("\nExplorer HAT exiting cleanly, please wait...")
+    logger.debug("\nExplorer HAT exiting cleanly, please wait...")
 
-    print("Stopping flashy things...")
+    logger.debug("Stopping flashy things...")
     try:
         output.stop()
         input.stop()
@@ -663,13 +667,11 @@ def explorerhat_exit():
     except AttributeError:
         pass
 
-    print("Stopping user tasks...")
+    logger.debug("Stopping user tasks...")
     async_stop_all()
 
-    print("Cleaning up...")
+    logger.debug("Cleaning up...")
     GPIO.cleanup()
-
-    print("Goodbye!")
 
 
 GPIO.setmode(GPIO.BCM)
@@ -688,11 +690,11 @@ _cap1208.set_touch_delta(10)
 from . import analog as _analog
 
 if _analog.adc_available:
-    print("Explorer HAT Pro detected...")
+    logger.debug("Explorer HAT Pro detected...")
     explorer_pro = True
 else:
-    print("Explorer HAT Basic detected...")
-    print("If this is incorrect, please check your i2c settings!")
+    logger.debug("Explorer HAT Basic detected...")
+    logger.debug("If this is incorrect, please check your i2c settings!")
     explorer_pro = False
 
 atexit.register(explorerhat_exit)
@@ -743,7 +745,7 @@ try:
         analog._add(three=AnalogInput(1))
         analog._add(four=AnalogInput(0))
 except RuntimeError:
-    print("YOu must be root to use Explorer HAT!")
+    logger.error("YOu must be root to use Explorer HAT!")
     ready = False
 
 _help = {

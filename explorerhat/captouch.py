@@ -5,12 +5,7 @@ Currently supported ICs:
 CAP1208 - 8 Inputs
 CAP1188 - 8 Inputs, 8 LEDs
 """
-try:
-    from smbus import SMBus
-except ImportError:
-    exit("This library requires python-smbus\nInstall with: sudo apt-get install python-smbus")
-
-
+from smbus import SMBus
 import atexit
 import signal
 import sys
@@ -27,30 +22,30 @@ PID_CAP1188 = 0b01010000
 
 # REGISTER MAP
 
-R_MAIN_CONTROL      = 0x00
-R_GENERAL_STATUS    = 0x02
-R_INPUT_STATUS      = 0x03
-R_LED_STATUS        = 0x04
+R_MAIN_CONTROL = 0x00
+R_GENERAL_STATUS = 0x02
+R_INPUT_STATUS = 0x03
+R_LED_STATUS = 0x04
 R_NOISE_FLAG_STATUS = 0x0A
 
 # Read-only delta counts for all inputs
-R_INPUT_1_DELTA   = 0x10
-R_INPUT_2_DELTA   = 0x11
-R_INPUT_3_DELTA   = 0x12
-R_INPUT_4_DELTA   = 0x13
-R_INPUT_5_DELTA   = 0x14
-R_INPUT_6_DELTA   = 0x15
-R_INPUT_7_DELTA   = 0x16
-R_INPUT_8_DELTA   = 0x17
+R_INPUT_1_DELTA = 0x10
+R_INPUT_2_DELTA = 0x11
+R_INPUT_3_DELTA = 0x12
+R_INPUT_4_DELTA = 0x13
+R_INPUT_5_DELTA = 0x14
+R_INPUT_6_DELTA = 0x15
+R_INPUT_7_DELTA = 0x16
+R_INPUT_8_DELTA = 0x17
 
-R_SENSITIVITY     = 0x1F
+R_SENSITIVITY = 0x1F
 
-R_GENERAL_CONFIG  = 0x20
-R_INPUT_ENABLE    = 0x21
+R_GENERAL_CONFIG = 0x20
+R_INPUT_ENABLE = 0x21
 
-R_INPUT_CONFIG    = 0x22
+R_INPUT_CONFIG = 0x22
 
-R_INPUT_CONFIG2   = 0x23 # Default 0x00000111
+R_INPUT_CONFIG2 = 0x23  # Default 0x00000111
 
 # Values for bits 3 to 0 of R_INPUT_CONFIG2
 # Determines minimum amount of time before
@@ -61,90 +56,90 @@ R_INPUT_CONFIG2   = 0x23 # Default 0x00000111
 #
 # Resolution of 35ms, max = 35 + (35 * 0b1111) = 560ms
 
-R_SAMPLING_CONFIG = 0x24 # Default 0x00111001
-R_CALIBRATION     = 0x26 # Default 0b00000000
-R_INTERRUPT_EN    = 0x27 # Default 0b11111111
-R_REPEAT_EN       = 0x28 # Default 0b11111111
-R_MTOUCH_CONFIG   = 0x2A # Default 0b11111111
+R_SAMPLING_CONFIG = 0x24  # Default 0x00111001
+R_CALIBRATION = 0x26  # Default 0b00000000
+R_INTERRUPT_EN = 0x27  # Default 0b11111111
+R_REPEAT_EN = 0x28  # Default 0b11111111
+R_MTOUCH_CONFIG = 0x2A  # Default 0b11111111
 R_MTOUCH_PAT_CONF = 0x2B
-R_MTOUCH_PATTERN  = 0x2D
-R_COUNT_O_LIMIT   = 0x2E
-R_RECALIBRATION   = 0x2F
+R_MTOUCH_PATTERN = 0x2D
+R_COUNT_O_LIMIT = 0x2E
+R_RECALIBRATION = 0x2F
 
 # R/W Touch detection thresholds for inputs
-R_INPUT_1_THRESH  = 0x30
-R_INPUT_2_THRESH  = 0x31
-R_INPUT_3_THRESH  = 0x32
-R_INPUT_4_THRESH  = 0x33
-R_INPUT_4_THRESH  = 0x34
-R_INPUT_6_THRESH  = 0x35
-R_INPUT_7_THRESH  = 0x36
-R_INPUT_8_THRESH  = 0x37
+R_INPUT_1_THRESH = 0x30
+R_INPUT_2_THRESH = 0x31
+R_INPUT_3_THRESH = 0x32
+R_INPUT_4_THRESH = 0x33
+R_INPUT_4_THRESH = 0x34
+R_INPUT_6_THRESH = 0x35
+R_INPUT_7_THRESH = 0x36
+R_INPUT_8_THRESH = 0x37
 
 # R/W Noise threshold for all inputs
-R_NOISE_THRESH    = 0x38
+R_NOISE_THRESH = 0x38
 
 # R/W Standby and Config Registers
 R_STANDBY_CHANNEL = 0x40
-R_STANDBY_CONFIG  = 0x41
-R_STANDBY_SENS    = 0x42
-R_STANDBY_THRESH  = 0x43
-R_CONFIGURATION2  = 0x44
+R_STANDBY_CONFIG = 0x41
+R_STANDBY_SENS = 0x42
+R_STANDBY_THRESH = 0x43
+R_CONFIGURATION2 = 0x44
 
 # Read-only reference counts for sensor inputs
-R_INPUT_1_BCOUNT  = 0x50
-R_INPUT_2_BCOUNT  = 0x51
-R_INPUT_3_BCOUNT  = 0x52
-R_INPUT_4_BCOUNT  = 0x53
-R_INPUT_5_BCOUNT  = 0x54
-R_INPUT_6_BCOUNT  = 0x55
-R_INPUT_7_BCOUNT  = 0x56
-R_INPUT_8_BCOUNT  = 0x57
+R_INPUT_1_BCOUNT = 0x50
+R_INPUT_2_BCOUNT = 0x51
+R_INPUT_3_BCOUNT = 0x52
+R_INPUT_4_BCOUNT = 0x53
+R_INPUT_5_BCOUNT = 0x54
+R_INPUT_6_BCOUNT = 0x55
+R_INPUT_7_BCOUNT = 0x56
+R_INPUT_8_BCOUNT = 0x57
 
 # LED Controls - For CAP1188 and similar
 R_LED_OUTPUT_TYPE = 0x71
-R_LED_LINKING     = 0x72
-R_LED_POLARITY    = 0x73
-R_LED_OUTPUT_CON  = 0x74
-R_LED_LTRANS_CON  = 0x77
-R_LED_MIRROR_CON  = 0x79
+R_LED_LINKING = 0x72
+R_LED_POLARITY = 0x73
+R_LED_OUTPUT_CON = 0x74
+R_LED_LTRANS_CON = 0x77
+R_LED_MIRROR_CON = 0x79
 
 # LED Behaviour
-R_LED_BEHAVIOUR_1 = 0x81 # For LEDs 1-4
-R_LED_BEHAVIOUR_2 = 0x82 # For LEDs 5-8
+R_LED_BEHAVIOUR_1 = 0x81  # For LEDs 1-4
+R_LED_BEHAVIOUR_2 = 0x82  # For LEDs 5-8
 R_LED_PULSE_1_PER = 0x84
 R_LED_PULSE_2_PER = 0x85
 R_LED_BREATHE_PER = 0x86
-R_LED_CONFIG      = 0x88
+R_LED_CONFIG = 0x88
 R_LED_PULSE_1_DUT = 0x90
 R_LED_PULSE_2_DUT = 0x91
 R_LED_BREATHE_DUT = 0x92
-R_LED_DIRECT_DUT  = 0x93
+R_LED_DIRECT_DUT = 0x93
 R_LED_DIRECT_RAMP = 0x94
-R_LED_OFF_DELAY   = 0x95
+R_LED_OFF_DELAY = 0x95
 
 # R/W Power buttonc ontrol
-R_POWER_BUTTON    = 0x60
+R_POWER_BUTTON = 0x60
 R_POW_BUTTON_CONF = 0x61
 
 # Read-only upper 8-bit calibration values for sensors
-R_INPUT_1_CALIB   = 0xB1
-R_INPUT_2_CALIB   = 0xB2
-R_INPUT_3_CALIB   = 0xB3
-R_INPUT_4_CALIB   = 0xB4
-R_INPUT_5_CALIB   = 0xB5
-R_INPUT_6_CALIB   = 0xB6
-R_INPUT_7_CALIB   = 0xB7
-R_INPUT_8_CALIB   = 0xB8
+R_INPUT_1_CALIB = 0xB1
+R_INPUT_2_CALIB = 0xB2
+R_INPUT_3_CALIB = 0xB3
+R_INPUT_4_CALIB = 0xB4
+R_INPUT_5_CALIB = 0xB5
+R_INPUT_6_CALIB = 0xB6
+R_INPUT_7_CALIB = 0xB7
+R_INPUT_8_CALIB = 0xB8
 
 # Read-only 2 LSBs for each sensor input
-R_INPUT_CAL_LSB1  = 0xB9
-R_INPUT_CAL_LSB2  = 0xBA
+R_INPUT_CAL_LSB1 = 0xB9
+R_INPUT_CAL_LSB2 = 0xBA
 
 # Product ID Registers
-R_PRODUCT_ID      = 0xFD
+R_PRODUCT_ID = 0xFD
 R_MANUFACTURER_ID = 0xFE
-R_REVISION        = 0xFF
+R_REVISION = 0xFF
 
 ## Basic stoppable thread wrapper
 #
@@ -154,7 +149,7 @@ class StoppableThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.stop_event = threading.Event()
-        self.daemon = True         
+        self.daemon = True
 
     def start(self):
         if self.isAlive() == False:
@@ -167,6 +162,7 @@ class StoppableThread(threading.Thread):
             self.stop_event.set()
             # block calling thread until thread really has terminated
             self.join()
+
 
 ## Basic thread wrapper class for asyncronously running functions
 #
@@ -184,10 +180,11 @@ class AsyncWorker(StoppableThread):
                 self.stop_event.set()
                 break
 
+
 class Cap1xxx():
     supported = [PID_CAP1208, PID_CAP1188]
-  
-    def __init__(self, i2c_addr=DEFAULT_ADDR, i2c_bus=1, on_touch=[None]*8):
+
+    def __init__(self, i2c_addr=DEFAULT_ADDR, i2c_bus=1, on_touch=[None] * 8):
         self.async_poll = None
         self.i2c_addr = i2c_addr
         self.i2c = SMBus(i2c_bus)
@@ -195,18 +192,18 @@ class Cap1xxx():
         self._delta = 50
 
         self.handlers = {
-            'press' :[None]*8,
-            'release': [None]*8,
-            'held'    : [None]*8
+            'press': [None] * 8,
+            'release': [None] * 8,
+            'held': [None] * 8
         }
 
         self.touch_handlers = on_touch
-        self.last_input_status = [False]*8
-        self.input_status = ['none']*8
-        self.input_pressed = [False]*8
+        self.last_input_status = [False] * 8
+        self.input_status = ['none'] * 8
+        self.input_pressed = [False] * 8
         self.repeat_enabled = 0b00000000
         self.release_enabled = 0b11111111
-        
+
         self.product_id = self._get_product_id()
 
         if not self.product_id in self.supported:
@@ -234,21 +231,21 @@ class Cap1xxx():
         touched = self._read_byte(R_INPUT_STATUS)
         threshold = self._read_block(R_INPUT_1_THRESH, 8)
         delta = self._read_block(R_INPUT_1_DELTA, 8)
-        #status = ['none'] * 8
+        # status = ['none'] * 8
         for x in range(8):
             if (1 << x) & touched:
                 status = 'none'
-                _delta = self._get_twos_comp(delta[x]) 
-                #threshold = self._read_byte(R_INPUT_1_THRESH + x)
-                #print('Got event with delta: {}, thresh: {}'.format(_delta, threshold[x]))
+                _delta = self._get_twos_comp(delta[x])
+                # threshold = self._read_byte(R_INPUT_1_THRESH + x)
+                # print('Got event with delta: {}, thresh: {}'.format(_delta, threshold[x]))
                 # We only ever want to detect PRESS events
                 # If repeat is disabled, and release detect is enabled
-                if _delta >= threshold[x]: # self._delta:
+                if _delta >= threshold[x]:  # self._delta:
                     #  Touch down event
-                    if self.input_status[x] in ['press','held']:
+                    if self.input_status[x] in ['press', 'held']:
                         if self.repeat_enabled & (1 << x):
                             status = 'held'
-                    if self.input_status[x] in ['none','release']:
+                    if self.input_status[x] in ['none', 'release']:
                         if self.input_pressed[x]:
                             status = 'none'
                         else:
@@ -261,17 +258,17 @@ class Cap1xxx():
                         status = 'none'
 
                 self.input_status[x] = status
-                self.input_pressed[x] = status in ['press','held','none']
+                self.input_pressed[x] = status in ['press', 'held', 'none']
             else:
                 self.input_status[x] = 'none'
                 self.input_pressed[x] = False
         return self.input_status
 
-    def _get_twos_comp(self,val):
-        if ( val & (1<< (8 - 1))) != 0:
+    def _get_twos_comp(self, val):
+        if (val & (1 << (8 - 1))) != 0:
             val = val - (1 << 8)
         return val
-        
+
     def clear_interrupt(self):
         """Clear the interrupt flag, bit 0, of the
         main control register"""
@@ -331,22 +328,22 @@ class Cap1xxx():
         self._write_byte(R_INPUT_CONFIG, input_config)
 
     def _calc_touch_rate(self, ms):
-        ms = min(max(ms,0),560)
+        ms = min(max(ms, 0), 560)
         scale = int((round(ms / 35.0) * 35) - 35) / 35
         return scale
 
     def _poll(self):
         """Single polling pass, should be called in
         a loop, preferably threaded."""
-        self.count += 1        
+        self.count += 1
         if self.wait_for_interrupt():
             inputs = self.get_input_status()
             for x in range(8):
                 self._trigger_handler(x, inputs[x])
             self.clear_interrupt()
-        
-            #if self.count > 10:    
-                # Force recalibration on fruit pads
+
+            # if self.count > 10:
+            # Force recalibration on fruit pads
             #    self._write_byte(0x26, 0b00001111)
             #    self.count = 0
 
@@ -366,7 +363,7 @@ class Cap1xxx():
         if en:
             self._write_byte(R_MTOUCH_CONFIG, ret_mt & ~0x80)
         else:
-            self._write_byte(R_MTOUCH_CONFIG, ret_mt | 0x80 )
+            self._write_byte(R_MTOUCH_CONFIG, ret_mt | 0x80)
 
     def enable_repeat(self, inputs):
         self.repeat_enabled = inputs
@@ -392,10 +389,11 @@ class Cap1xxx():
 
     def __del__(self):
         self.stop_watching()
-        
+
 
 class Cap1208(Cap1xxx):
     supported = [PID_CAP1208]
+
 
 class Cap1188(Cap1xxx):
     supported = [PID_CAP1188]
