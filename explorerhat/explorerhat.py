@@ -5,6 +5,7 @@
 API library for Explorer HAT and Explorer HAT Pro, Raspberry Pi add-on boards"""
 
 import atexit
+import collections
 import logging
 import signal
 import time
@@ -703,11 +704,20 @@ try:
     settings = ObjectCollection()
     settings._add(touch=CapTouchSettings())
 
+    light_names = collections.OrderedDict()
+    light_names['blue'] = Light(LED1)
+    light_names['yellow'] = Light(LED2)
+    light_names['red'] = Light(LED3)
+    light_names['green'] = Light(LED4)
+    lights = light_names.values()
+
     light = ObjectCollection()
-    light._add(blue=Light(LED1))
-    light._add(yellow=Light(LED2))
-    light._add(red=Light(LED3))
-    light._add(green=Light(LED4))
+    for name, led in light_names.items():
+        light._add(**{name: led})
+    # light._add(blue=Light(LED1))
+    # light._add(yellow=Light(LED2))
+    # light._add(red=Light(LED3))
+    # light._add(green=Light(LED4))
     light._alias(amber='yellow')
 
     output = ObjectCollection()

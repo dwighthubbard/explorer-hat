@@ -1,22 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="RaspberryPi Wifi">
+  <component name="PublishConfigData" autoUpload="Always" serverName="pihat">
     <serverData>
-      <paths name="Raspberry PI Hardwired">
-        <serverdata>
-          <mappings>
-            <mapping deploy="explorer-hat" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="Raspberry PI LAN">
-        <serverdata>
-          <mappings>
-            <mapping deploy="explorer-hat" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="RaspberryPi Wifi">
+      <paths name="pihat">
         <serverdata>
           <mappings>
             <mapping deploy="explorer-hat" local="$PROJECT_DIR$" web="/" />

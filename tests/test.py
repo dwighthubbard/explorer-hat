@@ -27,6 +27,9 @@ class Test_explorer(unittest.TestCase):
         explorerhat.touch.released(lambda x,y:explorerhat.light.off())
         signal.pause()
 
+    @unittest.skipIf(not ON_RASPBERRY_PI)
+    def test_led_one(self):
+        explorerhat.
 
 if __name__ == '__main__':
     unittest.main()
